@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
