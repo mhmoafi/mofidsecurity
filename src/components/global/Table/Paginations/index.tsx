@@ -8,22 +8,60 @@ type PropsType = {
 const Paginations = (props: PropsType) => {
   const { pageCount, onClickTrigger, selectedPage } = props;
 
-  const onPaginatorClickHandler = () => {};
   const generatePageButtons = () => {
     let buttonsElements = [];
-    for (let i = 1; i <= pageCount; i++) {
+    if (selectedPage < pageCount - 5) {
+      for (let i = selectedPage; i <= selectedPage + 3; i++) {
+        buttonsElements.push(
+          <button
+            key={i}
+            onClick={() => onClickTrigger(i)}
+            type="button"
+            className={`w-full px-4 py-2 border-t border-b text-base text-neutral-400  bg-white hover:bg-gray-100 ${
+              i === selectedPage && `font-medium text-neutral-900`
+            }`}
+          >
+            {i}
+          </button>
+        );
+      }
       buttonsElements.push(
-        <button
-          key={i}
-          onClick={() => onClickTrigger(i)}
-          type="button"
-          className={`w-full px-4 py-2 border-t border-b text-base text-neutral-400  bg-white hover:bg-gray-100 ${
-            i === selectedPage && `font-medium text-neutral-900`
-          }`}
+        <div
+          key={"dots"}
+          className="w-full px-4 py-2 border-t border-b text-base text-neutral-400  bg-white "
         >
-          {i}
-        </button>
+          ...
+        </div>
       );
+      for (let i = pageCount - 2; i <= pageCount; i++) {
+        buttonsElements.push(
+          <button
+            key={i}
+            onClick={() => onClickTrigger(i)}
+            type="button"
+            className={`w-full px-4 py-2 border-t border-b text-base text-neutral-400  bg-white hover:bg-gray-100 ${
+              i === selectedPage && `font-medium text-neutral-900`
+            }`}
+          >
+            {i}
+          </button>
+        );
+      }
+    } else {
+      for (let i = pageCount - 6; i <= pageCount; i++) {
+        buttonsElements.push(
+          <button
+            key={i}
+            onClick={() => onClickTrigger(i)}
+            type="button"
+            className={`w-full px-4 py-2 border-t border-b text-base text-neutral-400  bg-white hover:bg-gray-100 ${
+              i === selectedPage && `font-medium text-neutral-900`
+            }`}
+          >
+            {i}
+          </button>
+        );
+      }
     }
     return buttonsElements;
   };

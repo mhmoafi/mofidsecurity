@@ -1,5 +1,1 @@
-export type ICoins = {
-  id: string;
-  symbol: string;
-  name: string;
-};
+export type ICoins = string;

@@ -5,13 +5,15 @@ import {
   decoratePercentageNumber,
   setNumberDiscriminant,
 } from "../../../../lib/utilities/numberDecorator";
+import RowSkeleton from "./skeleton";
 
 type PropsType = {
   data: ICoinsMarket;
   number: number;
+  isLoading: boolean;
 };
 const Row = (props: PropsType): JSX.Element => {
-  const { data, number } = props;
+  const { data, number, isLoading } = props;
 
   const generateColorClass = (value: number): string => {
     if (value > 0) {
@@ -22,6 +24,10 @@ const Row = (props: PropsType): JSX.Element => {
       return "text-gray-700";
     }
   };
+
+  if (isLoading) {
+    return <RowSkeleton />;
+  }
   return (
     <tr className="border-b border-gray-200 bg-white">
       <td className="px-5 py-5  text-sm">
@@ -32,7 +38,9 @@ const Row = (props: PropsType): JSX.Element => {
         <p className="text-gray-400">{data.symbol}</p>
       </td>
       <td className="px-5 py-5 text-sm">
-        <p className="text-gray-900 whitespace-no-wrap">{data.current_price}</p>
+        <p className="text-gray-900 whitespace-no-wrap">
+          ${data.current_price}
+        </p>
       </td>
       <td className="px-5 py-5 text-sm">
         <p

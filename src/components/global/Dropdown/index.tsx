@@ -1,89 +1,110 @@
-import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import React, { Dispatch, useMemo, useState } from "react";
+import STRINGS from "../../../constants/strings";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+type PropsType = {
+  itemsList?: string[];
+  selectedItem?: string | null;
+  onSelectItemTrigger: (item: string) => void;
+  isLoading: boolean;
+};
+const Dropdown = (props: PropsType) => {
+  const { itemsList, selectedItem, onSelectItemTrigger, isLoading } = props;
 
-export default function Example() {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const onDropdownClickHandler = () => {
+    if (!isLoading) {
+      setIsOpen(!isOpen);
+    }
+  };
+  const onDropdownBlurHandler = () => {
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 200);
+  };
+  const onDropdownItemClick = (value: string) => {
+    onSelectItemTrigger(value);
+    setIsOpen(false);
+  };
+  const renderDropdownItems = () => {
+    return (
+      <>
+        {
+          <li>
+            <a
+              onClick={() =>
+                onDropdownItemClick(STRINGS.DROPDOWN.DEFAULT_VALUE)
+              }
+              className="block py-2 px-4 hover:bg-gray-600 hover:text-gray-100 font-black"
+            >
+              {STRINGS.DROPDOWN.DEFAULT_VALUE}
+            </a>
+          </li>
+        }
+        {itemsList &&
+          itemsList.length > 0 &&
+          itemsList.map((item, index) => {
+            return (
+              <li key={index}>
+                <a
+                  onClick={() => onDropdownItemClick(itemsList[index])}
+                  className="block py-2 px-4 hover:bg-gray-600 hover:text-gray-100"
+                >
+                  {item}
+                </a>
+              </li>
+            );
+          })}
+      </>
+    );
+  };
+
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
-          Options
-          <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-        </Menu.Button>
-      </div>
-
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
+    <div className="relative">
+      <button
+        onClick={onDropdownClickHandler}
+        onBlur={onDropdownBlurHandler}
+        className={`text-white bg-gray-700 w-44 hover:bg-gray-400 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center ${
+          isLoading ? `justify-between` : `justify-end`
+        }`}
+        type="button"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <div className="py-1">
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "block px-4 py-2 text-sm"
-                  )}
-                >
-                  Account settings
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "block px-4 py-2 text-sm"
-                  )}
-                >
-                  Support
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "block px-4 py-2 text-sm"
-                  )}
-                >
-                  License
-                </a>
-              )}
-            </Menu.Item>
-            <form method="POST" action="#">
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    type="submit"
-                    className={classNames(
-                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                      "block w-full px-4 py-2 text-left text-sm"
-                    )}
-                  >
-                    Sign out
-                  </button>
-                )}
-              </Menu.Item>
-            </form>
-          </div>
-        </Menu.Items>
-      </Transition>
-    </Menu>
+        {isLoading
+          ? "loading..."
+          : selectedItem
+          ? selectedItem
+          : STRINGS.DROPDOWN.DEFAULT_VALUE}
+        <svg
+          className="ml-2 w-4 h-4"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
+          ></path>
+        </svg>
+      </button>
+
+      <div
+        className={`${
+          !isOpen && `hidden`
+        } absolute top-12 z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow bg-gray-100 h-52 overflow-scroll`}
+      >
+        <ul
+          className="py-1 text-sm text-gray-900"
+          aria-labelledby="dropdownDefault"
+        >
+          {renderDropdownItems()}
+        </ul>
+      </div>
+    </div>
   );
-}
+};
+
+export default Dropdown;

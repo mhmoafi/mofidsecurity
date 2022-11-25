@@ -1,11 +1,12 @@
 import axios from "axios";
 
 const baseUrl = "https://api.coingecko.com/api/v3";
-const coinsListUrl = `${baseUrl}/coins/list`;
+const coinsListUrl = `${baseUrl}/simple/supported_vs_currencies`;
 const coinsMarketListUrl = `${baseUrl}/coins/markets`;
+const coinSearchUrl = `${baseUrl}/search`;
 
 type Args = {
-  cmd: "coinsList" | "coinsMarketList";
+  cmd: "coinsList" | "coinsMarketList" | "coinSearch";
   params?: {
     [key: string]: string | number;
   };
@@ -13,11 +14,15 @@ type Args = {
 type Method = "GET";
 
 const urlPreparer = (args: Args) => {
-  // console.log(args);
   if (args.cmd === "coinsList") return coinsListUrl;
   if (args.cmd === "coinsMarketList") return coinsMarketListUrl;
+  if (args.cmd === "coinSearch") return coinSearchUrl;
 };
-export const netCall = (method: Method, args: Args): any => {
+export const netCall = (
+  method: Method,
+  args: Args,
+  errorCallback?: () => void
+): any => {
   if (method === "GET") {
     return new Promise((resolve, reject) => {
       (async () => {
@@ -28,22 +33,17 @@ export const netCall = (method: Method, args: Args): any => {
             headers: {
               "Cache-Control": "no-cache",
               "Content-Type": "application/json",
-              //"Authorization": tokenChecker()
+              "Access-Control-Allow-Origin": "*",
             },
             params: { ...args.params },
           });
 
           if (res.status === 200) {
-            resolve([res.status, res.data]);
-          } else {
-            resolve(["380", "network error in Call"]);
+            resolve(res.data);
           }
         } catch (err: any) {
-          if (err.response && err.response.status) {
-            //response err num check here...
-          } else {
-            resolve(["381", "network error in Reply: " + JSON.stringify(err)]);
-          }
+          errorCallback && errorCallback();
+          // resolve(err);
         }
       })();
     });
